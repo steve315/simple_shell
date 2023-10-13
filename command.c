@@ -8,12 +8,12 @@
 void commnd(char *command, size_t size)
 {
 	ssize_t chars = getline(&command, &size, stdin);
-	
+	// char *comm = command;
 	if (chars == -1)
 	{
 		if (feof(stdin))
 		{
-			pr_literal("Exiting Shell\n");
+			pr_literal("Exiting Shell CTRL D\n");
 			exit(EXIT_FAILURE);
 		} else
 		{
