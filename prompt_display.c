@@ -5,5 +5,5 @@
  */
 void dis_prompt(void)
 {
-	pr_literal("#....");
+	pr_literal("($) ");
 }
