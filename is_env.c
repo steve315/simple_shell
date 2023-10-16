@@ -2,14 +2,19 @@
 /**
  * isin_env - checks if a command is in the environment
  * @command: command to check
- * Return: 1 if true 0 if false
+ * Return: 1 if false 0 if true
  */
 int isin_env(const char *command)
 {
-    char *path = getenv("PATH");
-	char *dup_path = _strdup(path);
-	char *token = strtok(dup_path, ":");
+	char *path = getenv("PATH");
+	char *copy_path = _strdup(path);
+	char *token = my_strtok(copy_path, ":");
 	char path_f[1024];
+
+	if (path == NULL)
+	{
+		perror("Path varible not set\n");
+	}
 
 	while (token != NULL)
 	{
@@ -19,55 +24,37 @@ int isin_env(const char *command)
 
 		if (access(path_f, X_OK) == 0)
 		{
-			free(dup_path);
+			free(copy_path);
 			return (1);
 		}
-		token = strtok(NULL, ":");
+		token = my_strtok(NULL, ":");
 	}
-	free(dup_path);
+	free(copy_path);
 	return (0);
 }
 /**
- * built_exit - checks if exit command is passed
+ * builtin - parses builtin functions
  * @name: input command
  * Return: on success
-*/
+ */
 int builtin(char **name)
 {
-    if (_strcmp(name[0], "exit") == 0)
-    {
-        exit(0);
-    }
-    else
-    {
-        if (_strcmp(name[0], "cd") == 0)
-        {
-            if (name[1] == NULL)
-                chdir(getenv("HOME"));
-            else
-                chdir(name[1]);
-        }
-    }
-    return (0);
-}
-int exit_s(infom_t *infom)
-{
-	int check;
-	if(infom->argv[1])
+	unsigned long int x;
+	char *func_name[] = {"exit", "env", "cd"};
+
+	int (*func[])(char **) = {&builtin_exit, &builtin_env, &builtin_cd};
+	if (name[0] == NULL)
 	{
-		check = atoi(infom->argv[1]);
-		if(check == -1)
-		{
-			infom->ex_status = 2;
-			pr_literal(infom->argv[1]);
-			_putchar('\n');
-			return (1);
-		}
-		infom->error_number = atoi(infom->argv[1]);
-		return (-2);
+		return (-1);
 	}
-	infom->error_number = -1;
-	return (-2);
+	for (x = 0; x < sizeof(func_name) / sizeof(char *); x++)
+	{
+		if (strcmp(name[0], func_name[x]) == 0)
+		{
+			return ((*func[x])(name));
+		}
+	}
+	return (0);
 }
 /**
  * _strdup - copies a string and returns a pointer to the new string
@@ -77,7 +64,7 @@ int exit_s(infom_t *infom)
 char *_strdup(char *str)
 {
 	int len;
-	char *dst;
+	char *dest;
 	int i;
 
 	len = 0;
@@ -90,8 +77,8 @@ char *_strdup(char *str)
 		len++;
 	}
 	len = len + 1;
-	dst = (char *) malloc(len * sizeof(char));
-	if (dst == NULL)
+	dest = (char *) malloc(len * sizeof(char));
+	if (dest == NULL)
 	{
 		return (NULL);
 	}
@@ -99,48 +86,10 @@ char *_strdup(char *str)
 	{
 		for (i = 0; i < len; i++)
 		{
-			dst[i] = str[i];
+			dest[i] = str[i];
 		}
-		dst[i] = '\0';
+		dest[i] = '\0';
 	}
-	return (dst);
-	free(dst);
-}
-int builtin_env(char **args)
-{
-	int i;
-    // Check if there are any arguments (not used in this function).
-    if (args[1] != NULL) {
-        fprintf(stderr, "builtin_env: Too many arguments\n");
-        return 1; // Return an error code.
-    }
-
-    // Loop through the environment and print each environment variable.
-    for (i = 0; environ[i] != NULL; i++) {
-        printf("%s\n", environ[i]);
-    }
-
-    return 0; // Return success.
-}
-int builtin_cd(char **args) {
-    if (args[1] == NULL) {
-        // If no directory is provided, change to the user's home directory.
-        const char *home_dir = getenv("HOME");
-        if (home_dir == NULL) {
-            fprintf(stderr, "own_cd: HOME environment variable not set\n");
-            return 1; // Return an error code.
-        }
-        if (chdir(home_dir) != 0) {
-            perror("own_cd");
-            return 1; // Return an error code.
-        }
-    } else {
-        // Change to the directory provided in args[1].
-        if (chdir(args[1]) != 0) {
-            perror("own_cd");
-            return 1; // Return an error code.
-        }
-    }
-
-    return 0; // Return success.
+	return (dest);
+	free(dest);
 }
