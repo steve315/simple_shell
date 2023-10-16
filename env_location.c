@@ -6,8 +6,9 @@
  */
 char *loc_env(const char *name)
 {
-	char *path_location;
+	char *env_list;
 
-	path_location = getenv(name);
-	return (path_location);
+	env_list = getenv(name);
+
+	return (env_list);
 }
