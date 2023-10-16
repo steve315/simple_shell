@@ -12,46 +12,40 @@
 #include <sys/stat.h>
 #include <limits.h>
 
-#define BUFF_SIZE 1024;
+#define BUFF_SIZE 1024
 
 extern char **environ;
-
-typedef struct list
-{
-	int num;
-	char *str;
-	struct list *next;
-} list_t;
-
+/**
+ * struct infom - struct for initializing function variables
+ * @argc: argument count
+ * @argv: argument vector
+ * @path: path
+ * @environ: environment variable
+ * @file_ds: file description
+*/
 typedef struct infom
 {
-	char *file_name;
-	char *arrg;
+	int argc;
 	char **argv;
 	char *path;
-	int argc;
-	unsigned int count;
-	list_t *env;
-	list_t *alias;
 	char **environ;
-	int ch_env;
-	int ex_status;
-    int error_number;
-    int file_ds;
+	int file_ds;
 } infom_t;
 
-#define INIT_INFOM {NULL, NULL, NULL, NULL, 0, 0,NULL, NULL, NULL, 0, 0, 0, 0}
+#define INITALIZE_INFOM {0, NULL, NULL, NULL, 0}
 
 void commnd(char *command, size_t size);
-void exec_command(infom_t *infom, char **argv);
+void exec_command(void);
 
-char *loc_env(const char *name);
+char *loc_env(infom_t *infom);
 int isin_env(const char *command);
 
 /*builtin functions*/
 int builtin(char **name);
 int builtin_env(char **args);
+int builtin_exit(char **args);
 int builtin_cd(char **args);
+int builtin_env(char **args);
 /*******/
 
 void fork_cmd(const char *args);
@@ -65,5 +59,10 @@ char *_strdup(char *str);
 char **strtow(char *str, char *d);
 ssize_t _getline(char **lineptr, ssize_t *n, FILE *stream);
 /*************/
+
+char **to_tokens(char *line);
+int fork_command(char **argum);
+char *get_input(void);
+char *my_strtok(char *str, const char *del);
 
 #endif
