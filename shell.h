@@ -64,5 +64,6 @@ char **to_tokens(char *line);
 int fork_command(char **argum);
 char *get_input(void);
 char *my_strtok(char *str, const char *del);
+char *_strchr(const char *s, int c);
 
 #endif
