@@ -19,7 +19,7 @@ char *my_strtok(char *str, const char *del)
 
 	if (*(s + i) != '\0')
 	{
-		while (*(s + i) != '\0' && (strchr(del, *(s + i)) == NULL))
+		while (*(s + i) != '\0' && (_strchr(del, *(s + i)) == NULL))
 		{
 			i++;
 		}
@@ -42,7 +42,6 @@ char *my_strtok(char *str, const char *del)
 			s++;
 		}
 		return (tok);
-		free(tok);
 	}
 	return (NULL);
 }
