@@ -10,16 +10,10 @@ void exec_command(void)
 
 	line = get_input(); /*reads input*/
 	arguments = to_tokens(line);/*splits line to tokens*/
+	free(line);
 	builtin(arguments);/*checks for builtin commands*/
 
-	if (isin_env(arguments[0]) == 1)	/*checks if command exists*/
-	{
-		fork_command(arguments);
-	}
-	else
-	{
-		perror("Command not found\n");
-	}
+	fork_command(arguments);
 	wait(NULL);
 }
 /**
@@ -46,7 +40,7 @@ int _strcmp(char *str1, char *str2)
  * to_tokens - tokenizes the input
  * @line: input stream
  * Return: tokens
-*/
+ */
 char **to_tokens(char *line)
 {
 	int buffer_size = 128;
@@ -59,6 +53,7 @@ char **to_tokens(char *line)
 	{
 		exit(EXIT_FAILURE);
 	}
+
 	token = my_strtok(line, delim);
 	while (token != NULL)
 	{
@@ -66,12 +61,17 @@ char **to_tokens(char *line)
 		{
 			break;
 		}
-		tokens[i++] = token;
+
+		tokens[i] = strdup(token);
+		if (tokens[i] == NULL)
+		{
+			exit(EXIT_FAILURE);
+		}
+		i++;
 		token = my_strtok(NULL, delim);
 	}
 	tokens[i] = NULL;
 	return (tokens);
-	free(tokens);
 }
 /**
  * fork_command - executes the fork command
