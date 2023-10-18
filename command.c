@@ -8,7 +8,7 @@
 void commnd(char *command, size_t size)
 {
 	ssize_t chars = getline(&command, &size, stdin);
-	// char *comm = command;
+
 	if (chars == -1)
 	{
 		if (feof(stdin))
