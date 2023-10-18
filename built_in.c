@@ -63,7 +63,7 @@ int builtin_exit(char **args)
 {
 	if (strcmp(args[0], "exit") == 0)
 	{
-		exit(0);
+		exit(98);
 	}
 	return (0);
 }
