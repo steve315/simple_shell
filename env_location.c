@@ -1,14 +1,14 @@
 #include "shell.h"
 /**
  * loc_env - get command exec location
- * @name: name of environment
+ * @infom: variable struct
  * Return: location
  */
-char *loc_env(const char *name)
+char *loc_env(infom_t *infom)
 {
 	char *env_list;
 
-	env_list = getenv(name);
+	env_list = getenv(infom->path);
 
 	return (env_list);
 }
