@@ -86,7 +86,7 @@ int fork_command(char **argum)
 	child_pid = fork();
 	if (child_pid == 0)
 	{
-		execvp(argum[0], argum);
+		execve(argum[0], argum, NULL);
 		perror("Error executing command");
 		exit(1);
 	}
