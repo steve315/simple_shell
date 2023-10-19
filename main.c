@@ -25,15 +25,15 @@ int main(int argc, char **argv)
 	{
 		do {
 			dis_prompt();
-			exec_command();
+			exec_command(infom, argv);
 		} while (stat == -1);
 	}
 	else
 	{
 		do {
-			exec_command();
+			exec_command(infom, argv);
 		} while (stat == -1);
 	}
 	wait(NULL);
-	return (0);
+	return (EXIT_SUCCESS);
 }
