@@ -1,19 +1,33 @@
 #include "shell.h"
 /**
  * exec_command - executes command
+ * @infom: struct
+ * @argv: argument vector
  * Return: 0 on success
  */
-void exec_command(void)
+void exec_command(infom_t *infom, char **argv)
 {
-	char **arguments;
 	char *line = NULL;
 
-	line = get_input(); /*reads input*/
-	arguments = to_tokens(line);/*splits line to tokens*/
-	free(line);
-	builtin(arguments);/*checks for builtin commands*/
+	reset_infom(infom);
+	get_input(infom); /*reads input*/
 
-	fork_command(arguments);
+	fill_infom(infom, argv);
+
+	env_list(infom);
+	infom->argum = to_tokens(infom);/*splits line to tokens*/
+
+	free(line);
+	builtin(infom);/*checks for builtin commands*/
+	if (isin_env(infom) == 0)
+	{
+		fork_command(infom);
+	}
+	else
+	{
+		perror("");
+	}
+
 	wait(NULL);
 }
 /**
@@ -38,17 +52,19 @@ int _strcmp(char *str1, char *str2)
 }
 /**
  * to_tokens - tokenizes the input
- * @line: input stream
+ * @infom: information struct
  * Return: tokens
  */
-char **to_tokens(char *line)
+char **to_tokens(infom_t *infom)
 {
 	int buffer_size = 128;
 	char *token;
 	char **tokens = malloc(buffer_size * sizeof(char *));
 	const char *delim = " ";
 	int i = 0;
+	char *line;
 
+	line = infom->commnd;
 	if (tokens == NULL)
 	{
 		exit(EXIT_FAILURE);
@@ -61,7 +77,6 @@ char **to_tokens(char *line)
 		{
 			break;
 		}
-
 		tokens[i] = strdup(token);
 		if (tokens[i] == NULL)
 		{
@@ -75,19 +90,20 @@ char **to_tokens(char *line)
 }
 /**
  * fork_command - executes the fork command
- * @argum: inpur arguments
+ * @infom: information struct
  * Return: 1 on success
  */
-int fork_command(char **argum)
+int fork_command(infom_t *infom)
 {
+	char **argum = infom->argum;
 	int stat = 0;
 	pid_t child_pid;
 
 	child_pid = fork();
 	if (child_pid == 0)
 	{
-		execve(argum[0], argum, NULL);
-		perror("Error executing command");
+		execve(infom->argv[0], argum, NULL);
+		perror("");
 		exit(1);
 	}
 	else if (child_pid < 0)
@@ -101,4 +117,28 @@ int fork_command(char **argum)
 		} while (!WIFEXITED(stat) && !WIFSIGNALED(stat));
 	}
 	return (-1);
+}
+/**
+ * fill_infom - function that populates infom struct
+ * @infom: struct
+ * @argv: argument vector
+ */
+void fill_infom(infom_t *infom, char **argv)
+{
+	int n;
+
+	infom->file_name = argv[0];
+
+	if (infom->commnd)
+	{
+		infom->argv = strtow(infom->commnd, " \t");
+		if (!infom->argv)
+		{
+			infom->argv[0] = _strdup(infom->commnd);
+			infom->argv[1] = NULL;
+		}
+		for (n = 0; infom->argv && infom->argv[n]; n++)
+			;
+		infom->argc = n;
+	}
 }
