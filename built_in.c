@@ -56,12 +56,12 @@ int builtin_cd(char **args)
 }
 /**
  * builtin_exit - exits the program
- * @args: input args
+ * @name: input args
  * Return: 0 on success
 */
-int builtin_exit(char **args)
+int builtin_exit(char **name)
 {
-	if (strcmp(args[0], "exit") == 0)
+	if (name[0])
 	{
 		exit(98);
 	}
