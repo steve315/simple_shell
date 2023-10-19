@@ -1,16 +1,18 @@
 #include "shell.h"
 /**
  * isin_env - checks if a command is in the environment
- * @command: command to check
+ * @infom: argument struct
  * Return: 1 if false 0 if true
  */
-int isin_env(const char *command)
+int isin_env(infom_t *infom)
 {
+	char *command;
 	char *path = getenv("PATH");
 	char *copy_path = _strdup(path);
 	char *token = my_strtok(copy_path, ":");
 	char path_f[1024];
 
+	command = infom->argv[0];
 	if (path == NULL)
 	{
 		perror("Path varible not set\n");
@@ -34,15 +36,17 @@ int isin_env(const char *command)
 }
 /**
  * builtin - parses builtin functions
- * @name: input command
+ * @infom: program info struct
  * Return: on success
  */
-int builtin(char **name)
+int builtin(infom_t *infom)
 {
+	char **name;
 	unsigned long int x;
 	char *func_name[] = {"exit", "env", "cd"};
 
 	int (*func[])(char **) = {&builtin_exit, &builtin_env, &builtin_cd};
+	name = infom->argv;
 	if (name[0] == NULL)
 	{
 		return (-1);
@@ -61,7 +65,7 @@ int builtin(char **name)
  * @str: input string
  * Return: pointer to the new string (dst)
  */
-char *_strdup(char *str)
+char *_strdup(const char *str)
 {
 	int len;
 	char *dest;
